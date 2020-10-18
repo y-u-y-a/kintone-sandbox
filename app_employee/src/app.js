@@ -14,7 +14,11 @@ kintone.events.on(ev_index, async(event) => {
   // console.log('event:', event);
   // console.log('all records:', event.records);
   let kt = new KintoneRecordManager;
-  let res = await kt.processRecords();
-  console.log('all records:', res.records);
+  // let res = await kt.processRecords('all');
+  // console.log('all records:', res.records);
+  let res = await kt.processRecords('find', 2);
   console.log('kintone:', kintone);
+  console.log('res:', res);
+  console.log('record:', res.record);
+
 });

@@ -3,6 +3,7 @@ class KintoneRecordManager {
 
   // インスタンス生成時に作成/実行
   constructor() {
+    this.record = null;
     this.records = [];
     this.appId = null;
     this.query = '';
@@ -11,15 +12,18 @@ class KintoneRecordManager {
   }
 
   // レコード関連の処理を実行
-  async processRecords() {
+  async processRecords(method, record_id=0) {
     this.appId = kintone.app.getId();
     this.records = []; // 初期化
-    await this.setRecords(); // API通信が全て完了するまで待つ
+    if (method == 'all') await this.setAllRecords(); // API通信が全て完了するまで待つ
+    else if (method == 'find') await this.setRecord(record_id);
     return this;
   }
-  // レコード取得
-  async setRecords() {
-    // API通信で取得
+
+  // =============================================================================
+
+  // 全てのレコード取得
+  async setAllRecords() {
     let params = {
       app: this.appId,
       query: `${this.query} limit ${this.limit} offset ${this.offset}`
@@ -30,7 +34,25 @@ class KintoneRecordManager {
     let len = res.records.length; // 結合後の要素数を取得
     this.offset += len;
     if (len < this.limit) this.ready = true;
-    else return this.setRecords(); // コールバック？
+    else return this.setAllRecords(); // コールバック？
+  }
+
+  // レコード番号で取得
+  async setRecord(record_id) {
+    let params = {
+      app: this.appId,
+      id: record_id
+    }
+    try {
+      let res = await kintone.api('/k/v1/record', 'GET', params);
+      this.record = res.record;
+      this.ready = true;
+      return;
+    }
+    catch (e) {
+      console.log('error:', e);
+      return;
+    }
   }
 }
 
