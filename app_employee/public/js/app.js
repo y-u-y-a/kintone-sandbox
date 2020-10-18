@@ -94,19 +94,19 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _modules_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/index */ \"./src/modules/index.js\");\n\n\nconst INDEX = 'app.record.index.show'; // 一覧ページ表示の際\nconst DETAIL = 'app.record.detail.show'; // レコード表示の際\nconst CREATE = 'app.record.create.show'; // 追加ページ表示の際\nconst EDIT = 'app.record.edit.show'; // レコード編集ページの際\nconst REPORT = 'app.report.show'; // グラフ表示\n\n(() => {\n  \"use strict\";\n\n  // 一覧ページ\n\n  kintone.events.on(INDEX, (event) => {\n    // 全てのレコード取得\n    let all_records = new _modules_index__WEBPACK_IMPORTED_MODULE_0__[\"KintoneRecordManager\"];\n    all_records.getProcessingRecords()\n    .then(response => {\n      // レコード取得後の処理\n      console.log(response.records);\n    });\n  });\n})();\n\n\n//# sourceURL=webpack:///./src/app.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _modules_recordManager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/recordManager */ \"./src/modules/recordManager.js\");\n\n\n'use strict';\n\nconst index = 'app.record.index.show'; // 一覧ページ表示の際\n// const DETAIL = 'app.record.detail.show'; // レコード表示の際\n// const CREATE = 'app.record.create.show'; // 追加ページ表示の際\n// const EDIT = 'app.record.edit.show'; // レコード編集ページの際\n// const REPORT = 'app.report.show'; // グラフ表示\n\n// let kt = new KintoneRecordManager;\n// let res = await kt.getAllRecords();\n// console.log('all records:', res.records);\n// console.log('kintone:', kintone);\n\n// 一覧ページで実行\nkintone.events.on(index, async(event) => {\n  console.log('event:', event);\n  console.log('all records:', event.records);\n});\n\n\n//# sourceURL=webpack:///./src/app.js?");
 
 /***/ }),
 
-/***/ "./src/modules/index.js":
-/*!******************************!*\
-  !*** ./src/modules/index.js ***!
-  \******************************/
-/*! exports provided: KintoneRecordManager */
+/***/ "./src/modules/recordManager.js":
+/*!**************************************!*\
+  !*** ./src/modules/recordManager.js ***!
+  \**************************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"KintoneRecordManager\", function() { return KintoneRecordManager; });\nclass KintoneRecordManager {\n  constructor() {\n    this.records = [];\n    this.appId = null;\n    this.query = '';\n    this.limit = 100;\n    this.offset = 0;\n  }\n  // 全てのレコードを取得\n  getProcessingRecords() {\n    return new Promise(resolve => {\n      this.appId = kintone.app.getId();\n      this.records = [];\n      this.getRecords()\n      .then(() => {\n        resolve(this);\n      });\n    });\n  }\n  // レコード取得\n  getRecords() {\n    return kintone.api('/k/v1/records', 'GET', {\n      app: this.appId,\n      query: this.query + (' limit ' + this.limit + ' offset ' + this.offset)\n    }).then(response => {\n      let len;\n      Array.prototype.push.apply(this.records, response.records);\n      len = response.records.length;\n      this.offset += len;\n      if (len < this.limit) {\n        this.ready = true;\n      } else {\n        return this.getRecords();\n      }\n    });\n  }\n}\n\n\n//# sourceURL=webpack:///./src/modules/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n// kintoneのレコード操作するクラス\nclass KintoneRecordManager {\n  // インスタンス生成時に作成/実行\n  constructor() {\n    this.records = [];\n    this.appId = null;\n    this.query = '';\n    this.limit = 100;\n    this.offset = 0;\n  }\n  // 全てのレコードを取得\n  getAllRecords() {\n    return new Promise(resolve => {\n      this.appId = kintone.app.getId();\n      this.records = [];\n      this.getRecords()\n      .then(() => {\n        resolve(this);\n      });\n    });\n  }\n  // レコード取得\n  getRecords() {\n    return kintone.api('/k/v1/records', 'GET', {\n      app: this.appId,\n      query: this.query + (' limit ' + this.limit + ' offset ' + this.offset)\n    }).then(response => {\n      let len;\n      Array.prototype.push.apply(this.records, response.records);\n      len = response.records.length;\n      this.offset += len;\n      if (len < this.limit) {\n        this.ready = true;\n      } else {\n        return this.getRecords();\n      }\n    });\n  }\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (KintoneRecordManager);\n\n\n//# sourceURL=webpack:///./src/modules/recordManager.js?");
 
 /***/ })
 
