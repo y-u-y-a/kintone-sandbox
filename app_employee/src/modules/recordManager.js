@@ -10,33 +10,27 @@ class KintoneRecordManager {
     this.offset = 0;
   }
 
-  // メソッド
-  getAllRecords() {
-    return new Promise(resolve => {
-      this.appId = kintone.app.getId();
-      this.records = [];
-      this.getRecords()
-      .then(() => {
-        resolve(this);
-      });
-    });
+  // レコード関連の処理を実行
+  async processRecords() {
+    this.appId = kintone.app.getId();
+    this.records = []; // 初期化
+    await this.setRecords(); // API通信が全て完了するまで待つ
+    return this;
   }
   // レコード取得
-  getRecords() {
-    return kintone.api('/k/v1/records', 'GET', {
+  async setRecords() {
+    // API通信で取得
+    let params = {
       app: this.appId,
-      query: this.query + (' limit ' + this.limit + ' offset ' + this.offset)
-    }).then(response => {
-      let len;
-      Array.prototype.push.apply(this.records, response.records);
-      len = response.records.length;
-      this.offset += len;
-      if (len < this.limit) {
-        this.ready = true;
-      } else {
-        return this.getRecords();
-      }
-    });
+      query: `${this.query} limit ${this.limit} offset ${this.offset}`
+    }
+    let res = await kintone.api('/k/v1/records', 'GET', params);
+
+    Array.prototype.push.apply(this.records, res.records); // 配列を結合
+    let len = res.records.length; // 結合後の要素数を取得
+    this.offset += len;
+    if (len < this.limit) this.ready = true;
+    else return this.setRecords(); // コールバック？
   }
 }
 
