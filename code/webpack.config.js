@@ -9,7 +9,13 @@ module.exports = {
   },
   // 出力先ファイル
   output: {
-    path: path.resolve(__dirname, 'public/js'),
+    path: path.resolve(__dirname, './public/js'),
     filename: '[name].js'
+  },
+  // エイリアス
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    }
   },
 }
