@@ -22,7 +22,7 @@ class KintoneRecordManager {
 
   // =============================================================================
 
-  // 全てのレコード取得
+  // 全てのレコードを取得しインスタンス変数に代入
   async setAllRecords() {
     let params = {
       app: this.appId,
@@ -37,7 +37,7 @@ class KintoneRecordManager {
     else return this.setAllRecords(); // コールバック？
   }
 
-  // レコード番号で取得
+  // レコード番号で取得しインスタンス変数に代入
   async setRecord(record_id) {
     let params = {
       app: this.appId,
